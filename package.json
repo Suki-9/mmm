@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "setup": "node ./utils.js --init",
   },
   "keywords": [],
   "author": "",

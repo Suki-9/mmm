@@ -1,0 +1,4 @@
+/.vscode
+/backend/resources
+/**/*/node_modules
+/**/*/pnpm-lock.yaml

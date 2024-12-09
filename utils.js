@@ -1,4 +1,5 @@
 const s = require('child_process').spawn;
+const fs = require('fs/promises');
 
 async function exec(command, args = [], options = {}) {
   return new Promise(r => s(command, args, {
@@ -166,8 +167,26 @@ async function init() {
   await exec('pnpm i', [], { cwd: __dirname + '/backend' });
 };
 
+async function build() {
+  await exec('pnpm build', [], { cwd: __dirname + '/frontend' });
+
+  const basePath = __dirname + '/backend/resources';
+
+  await fs.writeFile(basePath + '/sw.js', await fs.readFile(basePath + '/sw.js', 'utf-8').then(
+    async f => f.replace('/* filePath */', [`'/'`, ...(await (async function getFilePath(path) {
+      return fs.readdir([basePath, path].join('/'))
+        .then(
+          v => Promise.all(v.map(async v => (await fs.stat([basePath, path, v].join('/'))).isFile() ? `'${[path, v].join('/')}'` : await getFilePath([path, v].join('/'))))
+        ).then(
+          v => v.flat()
+        );
+    })())].join())
+  ));
+};
+
 (async () => {
   const args = process.argv.slice(2);
 
   if (args.includes('--init')) await init();
+  if (args.includes('--build')) await build();
 })()

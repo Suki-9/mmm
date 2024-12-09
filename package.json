@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup": "node ./utils.js --init",
+    "build": "node ./utils.js --build"
   },
   "keywords": [],
   "author": "",
